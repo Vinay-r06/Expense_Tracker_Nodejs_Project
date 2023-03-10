@@ -13,11 +13,12 @@ function isstringinvalid(string){
 }
  
 
-const generateAccessToken = (id,name)=>{
-  return jwt.sign({userId:id, name:name}, 'secretkey')
+const generateAccessToken = (id,name, ispremiumuser)=>{
+  return jwt.sign({userId:id, name:name,ispremiumuser}, 'secretkey')
 }
 
-exports.signup= async (req,res)=>{
+
+const signup= async (req,res)=>{
     try{
     const {name, email, password}= req.body;
   
@@ -40,7 +41,7 @@ exports.signup= async (req,res)=>{
 }
 
 
-exports.login= async (req, res)=>{
+const login= async (req, res)=>{
     try{
   const {email, password} = req.body;
   if(isstringinvalid(email) || isstringinvalid(password)){
@@ -68,7 +69,7 @@ const user= await User.findAll({where: {email}})
 }
 
 
-
+module.exports={signup,login,generateAccessToken}
 
 // bcrypt-->old technique..
 // we do one way encryption..means---once u encrypt it u get hash..but u never go back to password again from this hash.. u cannot decrypt the hash ever

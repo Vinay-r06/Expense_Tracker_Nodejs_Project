@@ -6,7 +6,7 @@ const userController= require('../controllers/expense');
 
 const userauthentication=require('../middleware/auth');
 
-//router.get('/allExpense', userController.allExpense);
+
 
 router.post('/addExpense', userauthentication.authenticate, userController.addExpense);
 

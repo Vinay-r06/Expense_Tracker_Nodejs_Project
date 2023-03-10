@@ -1,3 +1,5 @@
+
+
 async function addNewExpense(e){
     try{
     e.preventDefault();                                                                                                                      
@@ -24,6 +26,7 @@ const expenseDetail={                                                           
         window.addEventListener("DOMContentLoaded", async ()=>{                                                                                // the domcontentloaded event fires when the initial html document has been completely loaded and parsed, without waiting for stylesheets, images,and subframes to finish loading..
 
           const token = localStorage.getItem('token');
+          console.log("dom loaded>>",token)
           const response = await axios.get("http://localhost:3000/expense/getExpense", {headers:{"Authorization": token}})  
           try{
           console.log(response)
@@ -95,4 +98,48 @@ const expenseDetail={                                                           
 
 function showError(err){
     document.body.innerHTML+= `<div style="color:red;"> ${err}</div>`
+}
+
+
+document.getElementById('rzp-button').onclick= async function (e){
+  try{
+  const token = localStorage.getItem('token');
+  console.log("token from localsto>>", token);
+  const response= await axios.get('http://localhost:3000/purchase/premiummembership', {headers:{"Authorization": token} })
+  console.log(response)
+  var options = {
+    "key": response.data.key_id,                                                       // enter the key id generated from the dashboard
+    "order_id": response.data.order.id,                                                 // for one time payment
+  
+               // this handler function will handle the success payment
+    "handler": async function(response){
+      const res = await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+        order_id: options.order_id,
+        payment_id: response.razorpay_payment_id,
+      }, { headers: {"Authorization": token } })
+      console.log(res)
+      alert('You are a Premium User Now, Thanks for using our service')
+      document.getElementById('rzp-button').style.visibility="hidden"
+      document.getElementById('message').innerHTML= 'Your premium user now'
+      localStorage.setItem('token', res.data.token)
+
+    },          
+  };
+
+ const rzp1 = new Razorpay(options);
+ rzp1.open();
+ e.preventDefault();
+
+ rzp1.on('payment.failed', function (response){
+  axios.post('http://localhost:3000/purchase/transactionFailureUpdate', {
+        order_id: options.order_id,
+      }, { headers: {"Authorization": token } })
+  console.log(response)
+  alert('Something went wrong')
+ })
+}
+catch(err){
+  showError(err)  
+  console.log(err);  
+}
 }
