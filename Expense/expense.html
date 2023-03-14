@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="main-header">
+        <nav class="main-header__nav">
+            <div class="fill" style="background-color:rgba(58, 192, 232, 0.936); padding:5px; margin: 5px">
+        <h2 style="text-align: center" > Expense Tracker Application </h2>
+    </div>     
+    </nav>
+     </header>
+
+     <main>
+       <form class="form" id="myform" onsubmit='addNewExpense(event)'>
+        <div class="form-control">
+        <div class="fill" style="background-color:rgba(159, 182, 225, 0.936); padding:5px; margin: 5px">  
+        <label>Expenses Amount</label><br>
+        <input type="text" name="expenseamount" id="expenseamount" required/><br><br>
+        <label>Description</label><br>
+        <input type="text" name="description" id="description" required/><br><br>
+        <label>Choose Category</label><br>
+        <select id="category">
+          <option value="Select Category"> Select Category </option>
+          <option value="Electricity Bill"> Electricity Bill </option>
+          <option value="Dish Recharge Bill">Dish Recharge Bill </option>
+          <option value="Internet Bill"> Internet Bill </option>
+          <option value="Water Bill"> Water Bill </option>
+          <option value="Food Bill"> Food Bill </option>
+          <option value="Bike Service Bill"> Bike Service Bill</option>
+          <option value="Shopping Bill"> Shopping Bill</option>
+          <option value="Transport Charges"> Transport Charges</option>
+          <option value="Others"> Others </option>
+        </select></br><br>
+                                                                       <!-- <input type="text" name="category" id="category" required/><br><br> -->
+        <input class='btn' type="submit" value="Track Expense"/>
+      </form><br><br>
+      <div id="message"></div>
+      <button class='btn' id="rzp-button">Buy Premium</button>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    </div>
+</div>
+           <hr width="100%" size="5px" style="background-color: rgb(132, 203, 241)"/>                                                                      <!-- <ul id="listOfusers"></ul>      if u put here u cant delete the repeated user details..... u can delete first repeated user and then keep deleting user but repeated user cant delete details start remove from first repeated  -->
+       
+            <ul id="listOfExpenses"></ul>
+          <ul id="leaderboard"></ul>
+     </main>
+     <script src="./expense.js"></script> 
+     
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script>
+
+    
+</body>
+</html>
