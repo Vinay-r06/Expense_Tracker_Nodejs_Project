@@ -12,6 +12,7 @@ const Expense = require('./models/expenses');
 
 const Order = require('./models/orders')
 
+
 const app=express();
 
 app.use(cors());
@@ -35,11 +36,15 @@ app.use('/purchase', purchaseRoutes);
 const premiumRoutes = require('./routes/premium');
 app.use('/premium', premiumRoutes);
 
+const resetPasswordRoutes = require('./routes/resetpassword');
+app.use('/password', resetPasswordRoutes);
+
 User.hasMany(Expense);
 Expense.belongsTo(User);                                        // primary key of the user table will assign in expense table as foreign key in expense table
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
 
 sequelize
        .sync()
