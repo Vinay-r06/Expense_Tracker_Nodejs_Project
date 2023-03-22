@@ -12,6 +12,7 @@ const Expense = require('./models/expenses');
 
 const Order = require('./models/orders')
 
+const Forgotpassword=require('./models/forgotpassword');
 
 const app=express();
 
@@ -45,6 +46,8 @@ Expense.belongsTo(User);                                        // primary key o
 User.hasMany(Order);
 Order.belongsTo(User);
 
+User.hasMany(Forgotpassword);
+Forgotpassword.belongsTo(User);
 
 sequelize
        .sync()
