@@ -1,0 +1,273 @@
+vt-1....why we should not store files in servers The problem S3 solves..
+
+files could be images -> images, words , videos
+ storing it in the server->
+    - file has been stored in the harddisk
+    - whenever you need the file u can simply read or send it from your server.
+
+ when your app starts scaling(number of users have increased)
+ -- 4gb ram, server would start slowing down (due to increase of the computation the server would have no free memory to store like data.....users would have a request, in request u might be building a lot of variables and everything..variables are kind of stored in the ram itself...as number of users increase,  variables and everthing increases the number of processes increased as result computation increase)
+
+ this can slove in 2 things--
+
+ vertical scaling-- 8gb ram > 16gb > 32 gb > 64gb ram-- after this server become expensive and cannot do anything..i cant increase after 64 gb ram
+this is in single system u are adding ram continously..
+
+if vertical scaling fails when we reach after 64gb ram
+
+we use Horizontal scaling--
+
+Horizontal scaling--2 servers -8 gb ram each....each request go to any one server..2 server start sharing among each other at the load..
+ similiarly ---when u nedd 32 gb ram--- load balancers--buy 4 servers-- 8 gb ram each.
+ 
+ before this we had "load balancer"
+ this load balancer decides which server enroll the request to out of the four...which server to enroll the request to out of 4 servers..
+ round robin is the one of the method to send request to which server decides
+
+but the problem here is, if file stores is in 1 server
+example : server 1 - had all the  files uptill date...
+
+ due to users started increasing and the load balancers provide server 2
+but server 2 had no files..we should tell load balancers to when files download request required hit server 1 but the server 1 is busy and it is scaling increased it will be slow...so this is not the right way..
+
+          server 2-->
+
+the sloution is we will not store the files in any of the servers...instead of that have a distrubuted file system to store..
+
+server 1--->
+server 2--->                     store file in distrubuted files system(dfs).
+server 3--->
+server 4--->
+
+  u will store the file all the 3 servers can access in that way..
+  "s3" is one dfs.
+  if u give permission to access any one can access..it is called central place...all the server can come and access it and get the file...
+  s3 azure block...
+     
+
+
+
+
+vt-2.. aws s3 intro, what is an IAM user and understanding how to create one..
+
+aws s3 --> storing files
+advantage is---99.9999 % availability and fault torrent...that is the s3 kind of infrastructure aws build....it will be never be down....once u store files in s3 aws u assurred that nothing will happpen to that file.
+
+features of s3--- 
+          --versioning
+
+how to install
+  --common root account..when u looged in u get
+   in company root account keep it self ...they will give IAM roles to each u can do anything..
+
+  --IAM roles
+
+  there is admin account which is root account
+
+  --admin account- root (read, write, delete, all the project and product) (cto, senior manager)
+  -- IAM roles--> restrict the user to product 1 if he is working in product 1..
+       - dev ennvironment - delete , read, write, update..
+       - prod env - read access-- should ask senior person to this prod env role to read..
+
+
+
+  if everyone had root account someone delete no one knows who deleted  
+  only from root account can create IAM roles
+  search in aws --iam--u get identity access management, and create one user for s3 using..
+
+
+
+
+
+vt-3.. login as an IAM user and changing permissions from root and seeing its affects uptill 4 20...
+
+
+IAM User called ramu..
+
+
+
+vt-4...Uploading files manually to s3 UI, versioning and accessing files through unique URLs..
+
+
+aws s3-> storing files
+
+    -99.999 availability
+    -any server can access the files inside s3 if permissiom are granted
+    -hosting files
+    -versioning
+
+
+
+s3 called buckets..
+s3 has directory drive of a system
+
+search s3 on aws..
+select s3
+in s3 select create Bucket
+name the bucket --u r choice..
+us east ---aws hos-- u rchoice
+for "object ownership"-- select acl disabled ---means others amazon account cant access...only inside this account who gave a access can do..
+for block public access--- remove because we want show public
+bucket versioning--similar to github..u will see old intact...even if u delete from the bucket, it will be still be in versioning---enable it
+file name should be unique
+
+now in s3 page...select u r project or file u created
+add file any file 
+upload successfully..
+u will see object URL, and all info...
+
+open pic now..
+
+u can open through that object url if u give permisssion for public..
+click middle "permission"..and click "bucket ownership enforced"...then click "acls enabled"
+now go to objects and click pic file... u will info and then click permisssion ...now u will see the edit button is there..
+click edit--enable "everyone(public access)"--read access both
+click and save...
+
+u will get pic using that object url...
+this url will know about all 3 server
+
+now select version..
+u will see id of that and that is the current version...
+
+to change this version ..go to properties and select storage class..and change anything...and save
+now go to version..u willsee the change of id...
+if want to go back same version u can go back..change again u will again see the new id..
+even u can delete and get back again...
+whatever u done  maintained u will had version in proper way
+now i will add floder--select "upload"
+add floder anything and save...
+
+
+
+vt--5....What does it take to upload to S3 via code Understand the steps..
+
+when u were doing it from s3 u looged in, u had the permission...
+when u are doing it from code , any one can write code..
+first u need to provide some secret keys..
+
+
+- make IAM user who atleast has s3 access - s3bot
+-
+
+in your code 
+      - go ahead and uplaod this file -> .csv, .txt, .mov, .peg..
+      -which bucket (document bucket or project floder or Bucket)
+      - IAM user -> username (accesskey id) and password (secret key)
+      - make the fileurl : public
+
+response{
+     location : https://expensetracker123.s3.amazonaws.com/pic.png
+}
+
+error{
+  log the error
+  send a response back to frontend failes (500)
+}
+
+
+
+
+vt--6..Uploading files to S3 via code automatically using IAM users..
+
+in code create route for "download"
+create controller for "download"
+in that u want convert to JSON.stringify... because if u want be "txt"..u want be give string..u want send string...now it array right now..
+u cant write array to file..u can write string to file
+
+install npm i aws-sdk
+sdk-software development kit
+it is like axios 
+
+every product has it own bucket
+
+practically done bucket through code and upload to the s3 bucket...
+
+
+
+
+vt--7..Clean the s3 uploading code , make the uploaded file publicly accessible...
+
+
+changed file name with userId and date.... while download i am getting same file overriding so i added date with userid in file name.. i will get new file every time i download...
+and i cant return location url because network call of s3upload()...so i want to use async and await with promise..
+
+
+vt--8..How to use promises and async await to solve the problem of s3 uploading...
+
+
+since uploadToS3() is asyncronous task it will put call back quese moved to next line... i will get fileurl.. so i will do to wait for the task complete uploadToS3()..so i will use await with promise call back..
+put await "uploadToS3()"  and it will go to fuction of "uploadToS3()" and inside this fuction their is a asynchronous task of --> "s3bucket.upload()"
+so u want return promise for "s3bucket.upload()" wheather reslove or reject...
+and also handle error using try catch block..
+if u not use try catch block..when u run ..suppose bucket_name is false it will create error because that bucket not created in aws in  iamuser....
+soo when error happens it will be in pending state..because in params bucket name is not correct..so it will in pending state..u can see in vs code..so handle the error using try catch..
+
+here when click download u will get download as txt automatically.. because chrome is that behaviour for .csv file...
+
+
+vt--9..Error handling with try catch block..
+
+
+so always use try catch for apis
+
+
+
+vt--10...Moving all network calls to service Folder New pattern...
+
+
+rgt now we had---> MVC --> M-Model (DB schema)....
+                           V-View (json response) from the backend api we send only "json response".. in sometimes we send html,css, javascript from backend..
+                                               rgt now in current response we send only json response only..not html ,css also..
+                           C- controller ( route>> do this)write logic, we request from this route do this like that logic..
+
+                           in some company used like "Service floder" and "router floder"
+                           whenever u r calling anthing through network...in controller u write logic 
+                           and if u want doing any network  call that should happen in "Service floder"
+                          
+                                         --DB calls  (thrid party) (which is run RDS(relational database server))
+                                         --S3 call
+                                         --api calls
+                                  this things in service floder...controller will call service floder..
+                                  this is the pattern used some of the company...basically used for separting from the code..
+                                  things moved to service floder is reused code like....s3 call, and getExpense we use this things again and again..
+
+
+ create service floder
+ under this create another floder .js                                 
+
+
+
+
+vt--11..(Task) - Saving the file URL in the database for showing the User list of files he has downloaded....
+
+
+he can download any of the old files which he is downloaded before..
+this could be used for aduiting purpose..
+
+
+
+in database for download history:
+
+userid, filedownloaded url
+
+in frontend:
+ list of download files
+   -file
+   -file2                      // when he clicks on that file2..he  can download that old file...
+
+
+
+how to do this task...
+
+first-- u get fileurl from backend to frontend
+
+
+
+
+
+example: when u upload a photo on instagram
+         -- gets saved on s3 -> URL(u get url)
+         -- reportTable  ( u will save url in this table)
+          the table contain :
+             userId (as foreign key)  |  URL
