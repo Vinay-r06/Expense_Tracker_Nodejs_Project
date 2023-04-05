@@ -45,13 +45,22 @@
       <button class='btn' id="rzp-button">Buy Premium</button>
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     </div>
+    <h2>Your Expense</h2>
+    <div>
+      <ul id="itemsList"></ul>
+    </div>
 </div>
            <hr width="100%" size="5px" style="background-color: rgb(132, 203, 241)"/>                                                                      <!-- <ul id="listOfusers"></ul>      if u put here u cant delete the repeated user details..... u can delete first repeated user and then keep deleting user but repeated user cant delete details start remove from first repeated  -->
        
-            <ul id="listOfExpenses"></ul>
+           <!-- <ul id="itemsList"></ul> -->
           <ul id="leaderboard"></ul>
           <ul id="listofreport"></ul>
-
+          
+          <div>
+          <div id="pagination"></div><br><br>
+          <input id="limit" type="number">
+          <button onclick="setLimit(event)">set per page expense </button>
+          </div>
      </main>
      <script src="./expense.js"></script> 
      

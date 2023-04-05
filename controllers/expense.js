@@ -19,80 +19,6 @@ function isstringinvalid(string){
   }
 }
 
-// without transaction  (when 2 database is working inside database is failed but outside is success and database in added data and second database is not updated to overcome this we use transaction if one fails it rolls back it will not add data to databse)
-
-// exports.addExpense= async (req,res)=>{
-  
-                                                                           
-//     const {expenseamount, category, description}= req.body;
-
-//     if(isstringinvalid(expenseamount) || isstringinvalid(category) || isstringinvalid(description)){
-//       return res.status(400).json({success:false, message: 'parameter missing'})
-//    }    
-
-// // u can use this or below//   req.user.createExpense({expenseamount, category, description})----> this magic function by sequelize
-// Expense.create({expenseamount, category, description,userId: req.user.id})
-//               .then(expense=>{
-//                 var totalExpense = Number(req.user.totalExpenses) + Number(expenseamount)
-//                 console.log("total>>",totalExpense)
-//                User.update({
-//                   totalExpenses: totalExpense
-//                 },{
-//                   where: {id: req.user.id},
-//                 })
-//                 .then(async()=>{
-//                   res.status(200).json({newexpense:expense, success:true, message: "Added Successfully"})
-//                 })
-//                 .catch(async(err)=>{
-//                   return res.status(500).json({success:false, error:err})
-//                 })
-//               }).catch(async(err)=>{
-//                 return res.status(500).json({success : false, error:err})
-//               })
-
-//           }
-
-
-
- // wit transaction  
-
-
-// exports.addExpense= async (req,res)=>{
-//       const t= await sequelize.transaction();                                  // creating transaction object
-                                                                              
-//         const {expenseamount, category, description}= req.body;
-
-//         if(isstringinvalid(expenseamount) || isstringinvalid(category) || isstringinvalid(description)){
-//           return res.status(400).json({success:false, message: 'parameter missing'})
-//        }    
-
-//  // u can use this or below//   req.user.createExpense({expenseamount, category, description})----> this magic function by sequelize
-//    Expense.create({expenseamount, category, description,userId: req.user.id},{transaction:t})          // added transaction
-//                   .then(expense=>{
-//                     var totalExpense = Number(req.user.totalExpenses) + Number(expenseamount)
-//                     console.log("total>>",totalExpense)
-//                    User.update({
-//                       totalExpenses: totalExpense
-//                     },{
-//                       where: {id: req.user.id},
-//                       transaction:t                                                                             // added transaction
-//                     })
-//                     .then(async()=>{
-//                       await t.commit();
-//                       res.status(200).json({newexpense:expense, success:true, message: "Added Successfully"})
-//                     })
-//                     .catch(async(err)=>{
-//                       await t.rollback();
-//                       return res.status(500).json({success:false, error:err})
-//                     })
-//                   }).catch(async(err)=>{
-//                     await t.rollback();
-//                     return res.status(500).json({success : false, error:err})
-//                   })
-    
-//               }
-
-
 
 // transaction with async and await
 
@@ -128,8 +54,22 @@ await User.update({
 
 exports.getExpense= async (req,res)=>{
 try{
-  const response= await Expense.findAll({where:{userId:req.user.id}})
-  return res.status(200).json({allExpense:response, success:true})
+  const page=+req.query.page || 1;
+  const limit=+req.query.limit  || 3
+  const response= await Expense.findAll({where:{userId:req.user.id},
+                                         offset:(page-1)*limit,
+                                        limit:limit})
+  const allData=await Expense.findAll({where:{userId:req.user.id}})
+  console.log('length>>', allData.length)
+  return res.status(200).json({allExpense:response,
+                                //allData:allData, 
+                               hasnextpage:(limit*page<allData.length),
+                               nextpage:page+1,
+                               currentpage:page,
+                               haspreviouspage:page>1,
+                               previouspage:page-1,
+                               success:true
+                              })
    }
     catch(err){
      return res.status(500).json({success:false, error:err})
@@ -170,36 +110,6 @@ exports.deleteExpense= async (req,res)=>{
 
 
 
-// function uploadToS3(data,filename){
-// const bucket_name='expensestrackers3rahul';
-// const iam_User_key="AKIARVN2ZV3N6LZHOGAS";
-// const secret_key="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";
-
-
-// let s3bucket= new AWS.S3({
-//   region:'us-east-1',
-//   accessKeyId:iam_User_key,
-//   secretAccessKey:secret_key,
-// })
-
-//   var params={
-//     Bucket:bucket_name,
-//     Key:filename,
-//     Body:data,
-//     ACL: 'public-read'
-//   }
-//   return new Promise((resolve, reject)=>{
-//     s3bucket.upload(params, (err,s3response)=>{            // this is asyncronous task
-//       if(err){
-//         console.log('something went wrong', err)
-//         reject(err)                                       // if it rejects it will go to catch block below code
-//       }else{
-//         console.log('success', s3response);
-//         resolve (s3response.Location)
-//       }
-//     })
-//   })
-// }
 
 
 
@@ -208,7 +118,7 @@ try{
  const expenses = await UserServices.getExpenses(req);          // if wanyt where u can add..to get sepcific expense using id
  console.log(expenses)
  const stringfiedExpense= JSON.stringify({expenses})
- // each time while downloading i amgetting same file means overriding,,,so to download new we will use userid and date...
+                                                              // each time while downloading i am getting same file means overriding,,,so to download new we will use userid and date...
  const userId= req.user.id;
 
  const filename=`expensesrahul${userId}/${new Date()}.txt`;            // added date and userId in file name... i will get new file when downloading...
