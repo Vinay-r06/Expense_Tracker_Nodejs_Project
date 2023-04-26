@@ -58,3 +58,771 @@ use in that middleware..and assign argument...which data that u logged..how its 
 after excute u will fing loggind data from console...we dont want in console...we store in file..
 add node core module..."fs"
 by this u will know wats going on the server..
+
+
+
+
+deploying it--task
+
+
+vt-9
+
+setting up a ssl server..
+
+before swifting to hositing provider..
+
+this ssl and tls both are securing u r data that is sent from client to the server..
+
+client<---data---> server 
+
+data will be exchange when communicate btw client..
+secure with ssl/tls encryption..
+now secure because the data is unreadble as long as transit to decrypt on the server
+
+to encrypt and decrypt--we use ---public and private key which is known to the server..
+
+public key not something we want to protect
+private key only known by the server..because private will later import for decrypting data..
+
+the public key is used for encrypting..
+
+in ssl certificate we binds key to identity<----public key
+identity means ..domain, admin email address... u set that data when u certificate
+
+ssl certificate connects public key to the server and sends that to the client(browser)
+
+so, the client aware of public key and knowns that belongs to this server.
+typical  some had certificate had trust browser..
+
+but when we create certificate browser will not trust u..so in production use only trust known certificate that browser trust of quality ssl certificate for secure..
+now client can encrypt the data which is sends through the server..
+server can decrpt the data with that private key..only that private key can decrpt that data(which is sending)..
+
+
+to create own ssl :
+
+search browser--> openssl windows..
+select binaries-opensslwiki
+select first url(proweb)---openssl for windows in table
+select 1 or 2 version ...
+
+open vs code:
+
+in terminal:
+
+openssl req -nodes -new -x509 -keyout server.key -out server.cert
+and answer all the valid answer..
+commaon name: should "localhost"...different name certificate will not work ..because this has to set to u r domain...if u want run in example.com...it should example.com......use domain name which u r app is running on.
+above command give u private key and public key pacakge stuff in certificate..
+
+will get 2 
+server.cert--> certificate will send to the client at the end..
+server.key--> it is always stay in the server
+
+code in app.js
+
+const https=require('https');
+
+const privateKey=fs.readFileSync('server.key');          // this will block code excuetion untill file it reads..to start the server it should read first..
+const certificate=fs.readFileSync('server.cert');
+
+app.listen---->change-->https.createServer({key:privateKey,cert:certificate},app).listen(process.env.PORT||3000);
+now we will listen on this server..
+excute--> npm start
+
+
+
+
+vt-using a hositing provider..
+
+
+
+heroku->hositing provider..
+we build our own by computer with internet and expose of port number and running on u r computer and if not scalable application u nees other computer ..better use hosting provider..
+
+
+virtual server/ managed space<-----------your code            ------>yours users
+
+
+they will give "managed servers"(ssl,compression,logging, load balancing)
+
+
+load balancing--> when u had multiple virtual server, u need more resources, incoming request will be take which had capacity to in efficent way..--> this all managed by  "managed servers"---that will visible and hosting provider will do..
+
+this all run in "private network"(no extenal access)
+
+
+
+diagram:
+
+
+                |---private network..no external access--------------|                                                
+                              
+   your code---> virtual server/managed space  --><-- managed servers-->gateway, public server ---><---your users
+                                                       |
+                                                       ssl, compress, logging, load balancing--|
+
+
+
+
+
+vt12--task---understanding the project and the git setup...
+
+git--version control..
+
+save and manage u r source code: (3 mainly feauture) commits, branches, remote repositories..
+
+
+commits:
+
+"snapshots" of u r code..
+easily switch btw commits..
+create commit after bugfixes, new feautures...
+
+
+branches:
+
+different "versions" of u r code..
+e.g: master (production)...development, new -feature..
+separate development of new feautures and bugfixing..
+
+
+
+remote repositories:
+
+store code + commits + branches in the cloud.
+protect against loss of local data.
+deploy code automatically..
+
+
+
+
+
+vt13--task---a deployment example with heroku...
+cll- command line interface..
+
+compress will not provide by heroko..
+
+                                           add engine task 
+
+
+disable serverkey, server.cert
+config u r database information in heroko config..
+attach static ip in mongo db..
+dymno is virtual server..
+once restart server(dynomo) it will start interact by our application by remotly before we interact by locally..it will automatically serverd by https..
+
+
+.gitignore...
+
+this will tell git which floder which shoyuld not include in its snapshot..
+there node_module floder is imp..all u r third party packages stored there..we wont depoly that..
+that will increase the data that will transmit over the while..
+instaed this nodemodules will recreated on herokoo or hosting provider..will install u r dependenace on the server after u deploy the code..
+because in pacakge.json we had list of all the third party packages we using...
+this will take the hosting provider and install all the by hosting provider on the server...that is y we always do-- npm install --save
+because that will add all the entries in package.json file which can use during deployment..
+
+
+
+
+vt15...deploying APIs...
+
+graphl and rest
+
+
+
+
+
+
+
+task 22--deploy to aws with cicd pipelines...
+
+vt-1...Step 1 What is a server, AWS and Signing up..
+
+
+
+aws, azure, and google cloud platform..
+
+all three will give server for rent  ..
+
+
+what is server?
+ - like u r laptop..this had os like mac or windows, microsoft..and has proper gui system...
+gui-grapichal user interface..with the help gui we can use open file anything....
+this gui is like open file anything for normal user but not for techies..
+
+in server it is made for 1 service only...servering code..it has terminal..u can use it as a laptop alsoo..
+purpose of server is run the backend..when the rquest comes it serves it..
+
+
+--like u r laptop- without GUI..
+--linux OS or ubuntu OS..
+-- it just has a terminal(when login into server) where u can run u r code...
+--we can open ports of servers(get inside over the ports)..(configured from aws)..u open ports to  use external users..
+-- localhost:3000..if i know serverip...serverip:3000...then i get data from backend...we want open the port 300 from the server(can do aws website)..
+
+
+
+
+Step 1.5 - High Level Planning the steps for deploying application to AWS...
+
+
+-- signed up on aws- credit/ debit card..
+--aws free tier..
+--backend ready- move all the secrets to the .env file..
+--aws--u have to go buy a server..
+--configuring u r server(
+    install node,
+    sql server,
+    git
+)
+--get your code from github, clone it..
+--run the backend..
+-- we would try to test it now..
+
+
+
+
+
+Step - 2 Buying and Launching your first EC2 instance....
+
+
+
+
+-- signed up on aws- credit/ debit card..
+--aws free tier..
+--backend ready- move all the secrets to the .env file..
+--aws--u have to go buy a server..                                     --doing now this..
+--configuring u r server(
+    install node,
+    sql server,
+    git
+)
+
+--running u r sql server on a different server..
+--get your code from github, clone it..
+--run the backend..
+-- we would try to test it now..
+
+http://serverip:3000/user/getexpenses
+
+database would be in a different -> no access via localhost server..
+
+http://serverip
+
+
+
+
+--aws--u have to go buy a server..                                     --doing now this..
+
+
+
+
+vcpu -- is like virtual cpu - 1...which is like dual core, quad core...
+if vcpu is 2 means...u can do multiple like multi threading....
+
+storage...hard disk
+ssd- is solid state drive...it is very fast
+
+// if u want to open all the ports u will go to each and indiviually and open the ports...instead of the we open security by put this ec2...security group..
+
+security group-- all the the ec2 instance which belongs to this security group will open their ports 
+4 ec2 instances--> want to allow all the ports to be opened...    
+
+
+security grp 2...
+
+2 ec2 -> only few ports to be available...example: only ports -3000 to be available...this only few ports will keep in separte security grp..to open few..
+
+enable ssh and get port number number to enter
+request come from anywhere available to entire world--0.0.0.00
+
+create new key pair...
+u will get private(u stores) and public key(servers stores)....
+
+.pem file-- secret file...
+
+
+
+
+Step 3 - Making the Backend Ready for deployment
+
+
+move all hard coded to .env file....
+
+
+
+Step 2.5 Connecting to the newly bought Server
+
+
+
+
+--configuring u r server(                               --doing now this..
+    install node,   
+    sql server,
+    git
+)
+
+get inside server...
+cmd- get inside aws credential..
+check u r in aws credential..
+open that file...u will get .pem file...
+open that file..it has private key..rsa privaye key..
+
+ex: if i want get inside the laptop i want specify ip address...ip address is for locating the thing..
+
+address  
+    ipaddress
+
+user name-----nodejspractice
+
+go to aws root user...ec2-instances- connect-
+check ssh(like travel in which to get inside u r laptop) cilent..
+
+
+whenever u fire ec2 instance..ipadddress will given name 
+
+with ip address...--
+ ssh...copy till @ in ssh cilent in aws..
+ and copy ip address
+
+ run chmod(read permission) to open..if it not open..
+ sudo chmod 400 filename..
+ enter password...
+
+ run --ssh -i file name ec2-user@0.0054...
+
+steps to enter...
+through public ip...
+
+ cd file path aws credential..
+ open file folder...
+ ssh -i  "filename" ec2-user@3.84.55.6
+
+
+
+
+in aws ssh... 
+
+ssh -i "file name" ec2-user@domain name server(which had been created for this server)
+
+
+wheneveru hitting any url(filpkart.com)..
+u essential calling some server..which is running on ip address
+
+https://www.flipkart.com-->running on a server
+
+10.10.12.14--> https://www.flipkart.com(whenever u hit this it will hit 10.10.12.14 )
+
+in the same... ssh -i "file name" ec2-user@domain name server
+
+domain name server will hit ip address of ec2 instance(public ip address)
+
+pwd(present working directory)
+
+yum -pacakge..
+
+
+
+
+Step 4 & 5 - Configuring your server, Installing Git , node and cloning the package
+
+
+install---nodejs
+
+sudo su
+curl --silent --location https://rpm.nodesource.com/setup_14.x | bash -
+sudo yum install -y nodejs
+
+install---github
+
+sudo yum install git -y
+
+check--- node -v
+      npm -v
+      git --version
+
+
+
+
+get the code from git...
+
+
+
+git clone ... contiuned after git push
+
+
+vs code   --> push the backend..
+click git tree..
+
+push--- app.js, .env, database.js
+message-- private keys moved to env..and click tick 
+create new branch in terminal--- git checkout -b backendreadytodeploy
+                            -- git push origin backendreadytodeploy
+
+open github...new branch will uploaded...
+code button click ---> copy https                           
+
+
+go to terminal of ec2 
+
+git clone paste copied link
+run "ls"(find what is inside the directiry)
+cd filename
+ls  (it will show all the file like...app.js, middleware, package.json, models,  routers, util, controller)
+
+
+start with  . is private files...
+
+run -    ls-la    ...gives all the files..
+
+
+npm start
+error
+
+npm i
+error
+
+
+
+mkdir newwork     (will create new file)
+ls
+new file will visible..
+
+rm -rf newwork
+ls
+file is removed
+
+sudo npm i
+npm start
+sequelize connection error..
+
+
+
+Step 6 & 7 Configuring the SQL server & Connecting RDS to EC2 instance
+
+
+localhost:3306
+not ruuning database from the same server... 
+running in the same ec2 instance sql will be some security issues cant run...
+
+ec2 instance -> we would be opening a few ports for http request..
+(separte)sql server--> fast
+regular backup of data..
+
+
+aws -->RDS
+create database- click
+
+standard create
+mysql
+free tier
+
+disable auto scaling
+                                                (room ec2 running and db only)
+public access-> no
+
+create new security grp:
+to connect database (to open the one port and connect to ec2)
+we will attach this security grp to db..
+
+name :dbsecuritygroup
+  
+  create database--- click..
+
+
+
+  the database is up on a different server..
+      --public ip--entire world..
+      -- private ip-- internal  to aws..
+
+            EC2 with database ( no public ip)
+
+            address
+            username   (which u created when creating db in aws)
+            password   (which u created when creating db in aws)
+            i should allow the ec2 instance to get inside DB..
+
+
+
+sg of ec2 to connect sg of db:
+
+
+vpc security groups select...(i am opening port to connect ec2 instance)
+inbound rule .....select edit inbound
+select --mysql and 3306 default...select security group of ec2 instance...
+save rules
+
+
+
+now i want change username and password..
+
+in ec2 terminal---
+git branch -a
+git checkout (select u r floder)
+vi .env
+change the db host:  paste endpoint which is in aws...
+
+
+
+
+vt -09.   step 9 Frontend Deployment to AWS
+
+
+
+-- signed up on aws- credit/ debit card..
+--aws free tier..
+--backend ready- move all the secrets to the .env file..
+--aws--u have to go buy a server..                                     --doing now this..
+--configuring u r server(
+    install node,
+    sql server,
+    git
+)
+--git u r code from github, clone it..
+--running u r sql server on a different server..
+--ec2 connected successfully to sql server..
+--mysql workbench also connected to the DB..
+--run the backend and opened the port 3000..
+-- we would try to test it now from the Frontend..
+--deployment the frontend to the cloud..
+   -Integrate it with node js..
+
+   Backend -> sends json response when u hit the right route which u have defined
+
+   ->send the frontend from the other routes/Login/login.html
+   
+
+
+
+
+
+
+
+
+vt -10 Deploying with Process Manager PM2..
+
+
+10. performance and optimisation...
+
+  --never use npm start
+  process manager - pm2
+    -kill the terminal it would start work
+    --seeing those logs
+    -status
+    -- configure pm2 to restart node service on server restart
+    --schedule a job which runs at 3am or anytime..
+
+
+npm i -g pm2
+
+pm2 start app.js
+
+
+after kill the terminal...it is still working
+
+want to see logs...
+nvm use 14
+pm2 logs
+
+
+status:
+pm2 status
+
+type command in aws terminal:
+install pm2 in server
+login to ec2 instance:
+cd awscredential/
+ssh -i "sharpenerdemo2.pem" ec2-user@3.84.55.5
+
+
+
+pwd
+cd expensetrackerbanckend/
+npm start      ---(not work showing already running in 3000 and cant see logs also..because it is running on different terminal ..we cant see because dont had gui)
+
+sudo su
+lsof -i :3000
+
+it will show running terminal all...
+kill the one pid(process id):
+
+run - kill "pid number"
+
+npm i -g pm2
+sudo pm2 start app.js
+
+check login and sign up..it should work...
+
+run- pm2 logs
+
+to stop :   when npm was running find the port and kill it ...that was hectic..
+
+run - pm2 stop all
+
+after this pages not shown when run login and sign up..
+
+now start:
+
+pm2 start app.js
+
+check the login and sign page and run...it should work...
+
+if u had multiple pm2 it can usefull...
+
+pm2 stop 0    -->0 is id
+
+
+if want to stop multiple processor running u can stop only single..no all processor..
+
+
+
+
+
+vt -11 What is Nginx and installing it...
+
+
+
+
+this port is exposed and secured
+
+http: 80
+https: 443 
+
+3000 is not secured...--> local host was running in 3000 
+if tomarrow i want run on 8000-> then i should expose 8000 ports
+if tomarrow i want run on 9000-> then i should expose 9000 ports
+
+
+Nginx--> port 80, port 443 -> reverse proxy to localhost:3000
+
+3.84.55.2-->server ip...default port is 80 for http..
+by default whenever u do an   http request...means u hitting port 80....
+shown or display -->3.84.55.2  but it looks like...3.84.55.2:80
+
+
+install Nginx:
+
+sudo amazon-linux-extras list | grep   nginx
+
+sudo amazon-linux-extras enable nginx1
+
+sudo yum clean metadata
+sudo yum -y install nginx
+nginx -v
+
+
+2 steps--
+--installing Nginx package
+--configure Nginx -> port 80 what should happen...-->reverse proxy to localhost:3000..
+
+
+
+
+
+
+vt -12 Going Live with Nginx and Understanding conf files...
+
+
+
+assignment total points ->7 days--> average students..
+
+2100->300
+
+
+pwd
+cd../
+ls
+cd../
+ls
+select " cd etc"
+ls
+cd nginx/
+ls
+sudo service nginx restart
+systemctl status nginx      (using "nginx.conf") it will compile and excute..
+
+ vi nginx.conf
+
+copy nginx path and run when open port 80 in ec2 instance..  vi /usr/share/nginx/html
+
+cd /usr/share/nginx/html
+ls
+u will get all inside files..
+vi index.html
+to save-->esc :wq!  --> cant edit because not super user..(!-> forcing)
+
+
+:q! --> to clear and come back..
+vi index.html     --> now works..
+
+restart:
+(reverse-i-search)`res`:sudo service nginx restart ... now running on port 80 with edited
+
+shift +C
+cd ~(go back)
+pwd
+cd ../../etc/nginx
+
+
+we should serve login page...so we should update nginx config
+
+vi nginx.conf
+
+esc :q
+
+cd conf.d/
+ls                  (we dont had any file so create one..)
+sudo vi expensetracker.conf      
+
+copy code from medium for listen to port 80...
+esc :wq!   (saving code..)
+(reverse-i-search)`res`:sudo service nginx restart   --->to reload because new code added..
+systemctl status nginx          (u will see active running..)
+
+
+soo done with config nginx to nodejs...
+
+
+
+
+vt -13 What is IP Adress and what happens when you switch off your AWS server?
+
+when u run any instance on aws
+  --IP address -default would be dynamic
+  --different -> new ipaddress
+
+  aws says ipaddress
+
+  static ip address
+
+
+  in aws u want create elastic and associate and when reset it will not reset but in azure it will give different ip address everytime reset..
+
+
+
+  to create new dns with name namecheap.com
+DNS--namecheap
+
+  xubair.yavtechnology.com--> 168.63.234.14.80 
+
+xubair.yavtechnology,com -> hit DNS -->will which server or ip Address..and then it will pick from there ip adrress and run......
+
+
+
+
+
+vt -14 What are Load balancers used for
+
+
+server 1--> 100% - it starts hanging...
+u should increase server (ram) when it reaches capacity..8 gb ram to 16 gb ram..
+the load will drop to 50% 
+server 1(8gb -16gb)--> 50% load..
+server 1(32 gb)--> 100% ---then it should create another server 2
+server 2 (32 gb)
+
+
+whenever request --> re1 1 ....req 100......(this request sent to server 1 and server 2 when decision is made by load balancer..)
+

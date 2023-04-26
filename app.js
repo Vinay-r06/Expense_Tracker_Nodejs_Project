@@ -8,7 +8,8 @@ const cors=require('cors');
 const morgan= require('morgan')
 const helmet= require('helmet')
 const compression= require('compression')
-
+const dotenv= require('dotenv')
+dotenv.config();
 
 const sequelize = require('./util/database');
 
@@ -26,8 +27,8 @@ const app=express();
 
 app.use(cors());
 
-const dotenv= require('dotenv')
-dotenv.config();
+// const dotenv= require('dotenv')
+// dotenv.config();
 
 app.use(helmet())         //middleware
 
