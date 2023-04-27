@@ -500,7 +500,11 @@ sequelize connection error..
 
 
 
+
+
 Step 6 & 7 Configuring the SQL server & Connecting RDS to EC2 instance
+
+
 
 
 localhost:3306
@@ -566,6 +570,30 @@ change the db host:  paste endpoint which is in aws...
 
 
 
+vt - 8..Step 7& 8 Connecting EC2 to DB server, MYSQL workbench to DB server & Integrating with frontend
+
+
+status now:
+ ec2 connected to the db server..
+ we can get inside ec2 instance from our laptop via ssh..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 vt -09.   step 9 Frontend Deployment to AWS
 
@@ -592,7 +620,7 @@ vt -09.   step 9 Frontend Deployment to AWS
    Backend -> sends json response when u hit the right route which u have defined
 
    ->send the frontend from the other routes/Login/login.html
-   
+
 
 
 

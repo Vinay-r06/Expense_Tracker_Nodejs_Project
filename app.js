@@ -8,8 +8,15 @@ const cors=require('cors');
 const morgan= require('morgan')
 const helmet= require('helmet')
 const compression= require('compression')
+
+const app=express();
 const dotenv= require('dotenv')
 dotenv.config();
+
+// const envConfig = dotenv.parse(fs.readFileSync('.env'))
+// for (var k in envConfig) {
+//   process.env[k] = envConfig[k]
+// }
 
 const sequelize = require('./util/database');
 
@@ -23,7 +30,6 @@ const Forgotpassword=require('./models/forgotpassword');
 
 const Report = require('./models/reportdownload');
 
-const app=express();
 
 app.use(cors());
 
