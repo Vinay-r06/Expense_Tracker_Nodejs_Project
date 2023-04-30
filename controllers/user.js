@@ -1,8 +1,9 @@
-       
+const path=require('path')  
 const User = require('../models/users');
 const bcrypt=require('bcrypt')
 const jwt= require('jsonwebtoken')
 
+module.exports=path.dirname(process.mainModule.filename)
 
 function isstringinvalid(string){
     if(string==undefined || string.length===0){

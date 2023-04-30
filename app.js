@@ -5,18 +5,15 @@ const fs=require('fs')
 const express= require ('express');
 
 const cors=require('cors');
-const morgan= require('morgan')
-const helmet= require('helmet')
-const compression= require('compression')
+//const morgan= require('morgan')
+//const helmet= require('helmet')
+//const compression= require('compression')
 
 const app=express();
 const dotenv= require('dotenv')
+
 dotenv.config();
 
-// const envConfig = dotenv.parse(fs.readFileSync('.env'))
-// for (var k in envConfig) {
-//   process.env[k] = envConfig[k]
-// }
 
 const sequelize = require('./util/database');
 
@@ -36,18 +33,20 @@ app.use(cors());
 // const dotenv= require('dotenv')
 // dotenv.config();
 
-app.use(helmet())         //middleware
+//app.use(helmet())         //middleware
 
-app.use(compression())      // middleware
+//app.use(compression())      // middleware
 
 
-const accessLogStream=fs.createWriteStream(path.join(__dirname, 'access.log'),{flags:'a'})             //flags is a-->new data to be apended not override the wexiting file..but added at the end of the file..so we dont have 1 log statement in the file continously add the file..this writestream can be use by morgan..  
+//const accessLogStream=fs.createWriteStream(path.join(__dirname, 'access.log'),{flags:'a'})             //flags is a-->new data to be apended not override the wexiting file..but added at the end of the file..so we dont have 1 log statement in the file continously add the file..this writestream can be use by morgan..  
 //app.use(morgan('combined'))                                                                  // for console
-app.use(morgan('combined',{stream:accessLogStream}))                                          // for file store
+//app.use(morgan('combined',{stream:accessLogStream}))                                          // for file store
 
 
 const bodyParser = require('body-parser');
-app.use(bodyParser.json({extended:false}));
+app.use(bodyParser.json());
+
+
 
 const userRoutes =require('./routes/user.js');
 app.use('/user', userRoutes);
@@ -62,7 +61,26 @@ const premiumRoutes = require('./routes/premium');
 app.use('/premium', premiumRoutes);
 
 const resetPasswordRoutes = require('./routes/resetpassword');
+const { url } = require('inspector');
 app.use('/password', resetPasswordRoutes);
+
+app.use((req, res) => {
+   console.log(req.url)
+       res.sendFile(path.join(__dirname, `frontend/${req.url}`));
+       console.log('this on check',res.sendFile(path.join(__dirname, `frontend/${req.url}`)))
+})
+
+
+app.use(function(req, res, next) { 
+   res.setHeader( 'Content-Security-Policy', "script-src 'self' cdnjs.cloudflare.com" );
+ return next();
+ })
+
+// app.use((req,res)=>{
+//    console.log('urll',req.url)      // or can use req.originalurl
+//    res.sendFile(path.join(__dirname, `frontend/${req.url}`))             // __dirname--> is a deploying to aws with cicd pipelines file..
+// })
+
 
 
 

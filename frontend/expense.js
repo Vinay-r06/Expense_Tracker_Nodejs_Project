@@ -8,7 +8,7 @@ const expenseDetail={                                                           
                   }
                                                                                                                                       // axios libraraies 'post' for post data and save to database
           const token = localStorage.getItem('token');
-      const response = await axios.post("http://localhost:3000/expense/addExpense", expenseDetail, {headers: {"Authorization":token}})                                                    //i will do network call and save it over there.
+      const response = await axios.post("http://44.201.102.117:3000/expense/addExpense", expenseDetail, {headers: {"Authorization":token}})                                                    //i will do network call and save it over there.
           addNewExpensetoUI(response.data.newexpense)
           alert(response.data.message)
             }
@@ -48,7 +48,7 @@ const expenseDetail={                                                           
            download()
            showDownloadHistory()
           }
-        const response = await axios.get(`http://localhost:3000/expense/getExpense?page=${page}&limit=${limit}`, {headers:{"Authorization": token}})  
+        const response = await axios.get(`http://44.201.102.117:3000/expense/getExpense?page=${page}&limit=${limit}`, {headers:{"Authorization": token}})  
         try{
         console.log(response)
           for(var i=0;i<response.data.allExpense.length;i++){
@@ -103,7 +103,7 @@ async function getExpenses(page){
   try{
   const limit=localStorage.getItem('limit')
   const token=localStorage.getItem('token')
-  const response=await axios.get(`http://localhost:3000/expense/getExpense?page=${page}&limit=${limit}`, {headers:{"Authorization": token}})
+  const response=await axios.get(`http://44.201.102.117:3000/expense/getExpense?page=${page}&limit=${limit}`, {headers:{"Authorization": token}})
    console.log(response)
    for(var i=0;i<response.data.allExpense.length;i++){
     addNewExpensetoUI(response.data.allExpense[i]);                                                             //response.data nothing but object
@@ -153,7 +153,7 @@ function setLimit(e){
 async function deleteExpense(expenseid){                                       // function for deleting the data in database..
 try{
   const token = localStorage.getItem('token');
-  const response= await axios.delete(`http://localhost:3000/expense/deleteExpense/${expenseid}`, {headers:{"Authorization": token}})
+  const response= await axios.delete(`http://44.201.102.117:3000/expense/deleteExpense/${expenseid}`, {headers:{"Authorization": token}})
   removeExpensefromUI(expenseid);
   alert(response.data.message)
  }
@@ -189,7 +189,7 @@ document.getElementById('rzp-button').onclick= async function (e){
 try{
 const token = localStorage.getItem('token');
 console.log("token from localsto>>", token);
-const response= await axios.get('http://localhost:3000/purchase/premiummembership', {headers:{"Authorization": token} })
+const response= await axios.get('http://44.201.102.117:3000/purchase/premiummembership', {headers:{"Authorization": token} })
 console.log(response)
 var options = {
   "key": response.data.key_id,                                                       // enter the key id generated from the dashboard
@@ -197,7 +197,7 @@ var options = {
 
              // this handler function will handle the success payment
   "handler": async function(response){
-    const res = await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+    const res = await axios.post('http://44.201.102.117:3000/purchase/updatetransactionstatus', {
       order_id: options.order_id,
       payment_id: response.razorpay_payment_id,
     }, { headers: {"Authorization": token } })
@@ -217,7 +217,7 @@ rzp1.open();
 e.preventDefault();
 
 rzp1.on('payment.failed', function (response){
-axios.post('http://localhost:3000/purchase/transactionFailureUpdate', {
+axios.post('http://44.201.102.117:3000/purchase/transactionFailureUpdate', {
       order_id: options.order_id,
     }, { headers: {"Authorization": token } })
 console.log(response)
@@ -237,7 +237,7 @@ inputElement.value='Show LeaderBoard'
 inputElement.onclick= async()=>{
 const token=localStorage.getItem('token')
 
-const userLeaderBoardArray= await axios.get('http://localhost:3000/premium/showLeaderBoard', {headers: {'Authorization': token}})
+const userLeaderBoardArray= await axios.get('http://44.201.102.117:3000/premium/showLeaderBoard', {headers: {'Authorization': token}})
 
 var leaderBoardElem= document.getElementById("leaderboard");
 leaderBoardElem.innerHTML+='<h1>Leader Board</h1>'
@@ -255,7 +255,7 @@ const inputElement= document.createElement("input")
  inputElement.value='Download File'
  inputElement.onclick= async()=>{
 const token=localStorage.getItem('token')
-const response= await axios.get('http://localhost:3000/expense/download', {headers: {'Authorization': token}})
+const response= await axios.get('http://44.201.102.117:3000/expense/download', {headers: {'Authorization': token}})
 if(response.status===200){
 var a = document.createElement("a");
 a.href=response.data.fileUrl;
@@ -276,7 +276,7 @@ inputElement.type='button'
 inputElement.value='show Download History'
 inputElement.onclick= async()=>{
 const token=localStorage.getItem('token')
-const response= await axios.get('http://localhost:3000/expense/downloadHistory', {headers: {'Authorization': token}})
+const response= await axios.get('http://44.201.102.117:3000/expense/downloadHistory', {headers: {'Authorization': token}})
 const parentElement = document.getElementById('listofreport');
 parentElement.innerHTML='<h1>Dowload History</h1>'
 response.data.downloadReport.forEach((userDownloadReport)=>{

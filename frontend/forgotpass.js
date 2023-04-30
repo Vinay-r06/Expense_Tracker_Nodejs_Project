@@ -7,14 +7,14 @@ const userDetails={
     email:e.target.email.value,
 }
 console.log('checking post email>>>',userDetails)
-const response= await axios.post("http://localhost:3000/password/forgotpassword",userDetails)
+const response= await axios.post("http://44.201.102.117:3000/password/forgotpassword",userDetails)
 
 console.log(response)
 
 if(response.status===200){
     document.body.innerHTML+='<div style="color:red;">Mail Successfully Sent <div>'
     alert(response.data.message)
-    window.location.href="../Login/login.html";
+    window.location.href="./login.html";
     
 } else {
     throw new Error('Something went wrong !!!')

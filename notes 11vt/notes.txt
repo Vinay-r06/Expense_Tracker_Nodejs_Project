@@ -265,7 +265,7 @@ purpose of server is run the backend..when the rquest comes it serves it..
 
 
 
-Step 1.5 - High Level Planning the steps for deploying application to AWS...
+vt-2...Step 1.5 - High Level Planning the steps for deploying application to AWS...
 
 
 -- signed up on aws- credit/ debit card..
@@ -285,7 +285,7 @@ Step 1.5 - High Level Planning the steps for deploying application to AWS...
 
 
 
-Step - 2 Buying and Launching your first EC2 instance....
+vt-3...Step - 2 Buying and Launching your first EC2 instance....
 
 
 
@@ -346,14 +346,14 @@ u will get private(u stores) and public key(servers stores)....
 
 
 
-Step 3 - Making the Backend Ready for deployment
+vt-4...Step 3 - Making the Backend Ready for deployment
 
 
 move all hard coded to .env file....
 
 
 
-Step 2.5 Connecting to the newly bought Server
+vt-5...Step 2.5 Connecting to the newly bought Server
 
 
 
@@ -426,7 +426,7 @@ yum -pacakge..
 
 
 
-Step 4 & 5 - Configuring your server, Installing Git , node and cloning the package
+vt-6...Step 4 & 5 - Configuring your server, Installing Git , node and cloning the package
 
 
 install---nodejs
@@ -502,7 +502,7 @@ sequelize connection error..
 
 
 
-Step 6 & 7 Configuring the SQL server & Connecting RDS to EC2 instance
+vt-7...Step 6 & 7 Configuring the SQL server & Connecting RDS to EC2 instance
 
 
 
@@ -569,8 +569,30 @@ vi .env
 change the db host:  paste endpoint which is in aws...
 
 
+now git clone ...we want code...
 
-vt - 8..Step 7& 8 Connecting EC2 to DB server, MYSQL workbench to DB server & Integrating with frontend
+clone by https
+
+
+
+in aws terminal
+-- git clone "paste clone by https"(https://github.com/Vinay-r06/Expense_Tracker_Nodejs_Project.git)
+-- ls
+-- cd "floder name"/
+--- ls
+--- ls -la            
+--- sudo npm i
+--- npm start     (it works but sequelize error)
+--- vi .env
+--- git branch -a
+-- git checkout "(file name)"
+--vi .env
+-- i
+-- paste endpoint.. in aws rds copy endpoint
+
+
+
+vt-8...Step 7& 8 Connecting EC2 to DB server, MYSQL workbench to DB server & Integrating with frontend
 
 
 status now:
@@ -579,23 +601,171 @@ status now:
 
 
 
+-- signed up on aws- credit/ debit card..
+--aws free tier..
+--backend ready- move all the secrets to the .env file..
+--aws--u have to go buy a server..                                     --doing now this..
+--configuring u r server(
+    install node,
+    sql server,
+    git
+)
+-- get u r code from github , clone it..
+--running u r sql server on a different server..
+--EC2 connected successfully to sql server..
+--mysql workbench also connected to the DB..
+--run the backend and opened the port 3000
+-- we would try to test it now from the frontend....
+
+http://serverip:3000/user/getexpenses
+
+database would be in a different -> no access via localhost server..
+
+http://serverip
+
+
+
+
+create table..that is not created...
+
+go to "security group" to open this port to connect ec2 instance..
+select "inbound rules"
+select--edit inbound rules..
+add rule and select security group of ec2 instance to get in database
+
+
+open mysql workbench
+fill all...
+
+fill public ip address
+
+for mysql host name: go to aws rds and look for end point..copy that..
+fill all from aws info to sql fill ups...
+and click ok
+enter u r database..
+
+create new table (new schema)
+see all info and update in .env info of database..
+to do login aws ec2
+ls
+cd "file name"
+ls
+ls -la
+npm start  --not working error
+sudo su
+npm i
+vi .env   --to edit the info of db 
+click i  --to edit                         to exit--click "esc"
+
+
+
+save and exit---- ":wq"                          ---:q-->exit without saving
+check --> vi .env
+and exit--> :q
+
+source .env
+echo $DB_USERNAME
+echo $DB_NAME
+
+npm start
+
+
+
+testing this in web page copied from network.. ...http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+show in web when run -->{'success':false}
+shows success is false because jwt not..(same should show on server when u hit url)
+
+
+in the same should show on server also...
+
+
+copy open address in ec2 instance..
+Public IPv4 address--44.201.102.117
+
+run using ip address  of ec2 instance like below..
+
+http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+
+it will simply running and running...
+because u not opened the port..port not accessiable
+in the security grp u not opened this port...outside world to access..
+
+the accessiable is port 22 that is for ssh--->44.201.102.117:22
+it doesnt return anything because ssh..ssh for connecting servers..
+
+
+ec2 instance: go to security grp and edit bount rules..
+
+add rule:
+custom tcp  3000  anywhere 0.0.0.0/0 -->anyone anywhere...
+
+
+run in web-->44.201.102.117:3000
+something started working -->shows  ---{'success':false}
+now showing like when copied link from network 
+
+now both link working:
+
+http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+
+
+now the backend is opened and 3000 is accesible
+
+to connect frontend -->change- localhost -->44.201.102.117
+all frontend will cahnge...
+
+
+now run -->login or sign page and create user and login..
+
+after login u will expense page ...and check network tab---
+it will hit --Request URL: http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+ip address it is hitting..
+
+add expense-->that also hitting same:
+Request URL: http://44.201.102.117:3000/expense/addExpense
+
+
+this is how depoly ur application...and use it with frontend
+
+process:
+
+u r laptop via ssh --> ec2 instance--> from that u r getting into DB via password and username..
+now the host is db host...not localhost
+and it running on this endpoint..private endpoint...db not allowed accesible outside..
+
+
+
+linux command:
+
+pwd   --> to check directory of present..
+sudo su  --> for root user..
+ls -->check which floder had (not opening the floder.)
+cd "floder name" --> to open floder..                      to copy--- ctrl+ shift+ c
+                                                        to paste  -- right click mouse.
+ls -la       ---- to look all private .files
+mkdir  "new file name"
+rm -rf "file name to delete"
+vi .env                 -- vi its a editor without gui
+git branch -a             --  to select which branch ...u had lot of branch in github
+git checkout "(file name)"   --which u want open select
+to insert click  --  i 
+source .env                 -- to initalize all these variables..these varaibles in the terminal...initaial its empty..
+echo $DB_USERNAME                            -- to print command value
+echo $DB_NAME                           ...initializing all the variables in terminal...
+
+
+RDS for creating database separte:
+
+name: expenseAWS
+user name: vinayuser
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-vt -09.   step 9 Frontend Deployment to AWS
+vt -09....step 9 Frontend Deployment to AWS
 
 
 
@@ -615,19 +785,54 @@ vt -09.   step 9 Frontend Deployment to AWS
 --run the backend and opened the port 3000..
 -- we would try to test it now from the Frontend..
 --deployment the frontend to the cloud..
-   -Integrate it with node js..
 
-   Backend -> sends json response when u hit the right route which u have defined
+   -Integrate it with node js.....(many ways to deploy the frontend...here we integrate node.js)
 
-   ->send the frontend from the other routes/Login/login.html
+  rgt now Backend -> sends json response when u hit the right route which u have defined
 
-
-
+   ->send the frontend from the other routes.../Login/login.html
 
 
+copy all frontend in 1 floder..
+
+
+write-->app.js() 
+
+upload all to git 
+login to ec2 and clone
+cd "project filefilename"
+ls -la
+git status
+vi .env             //copy everything and keep it some where..
+git branch -a
+git fetch -a             //if error  do -- sudo su...and do-- git fetch -a
+
+git checkout "projectfilename"
+git pull origin "projectfilename"
+vi .env                // check all there
+
+cd "frontend"
+ls
+cd ../
+npm start                  //-- got error  already running..
 
 
 
+run the npm start in vs code and kill the terminal ...
+
+kill the terninal in aws terminal:
+
+lsof -i :3000
+kill pid                               // find PID 
+lsof -i :3000
+npm start                    // it starts working
+
+copy ec2 instance ip address and run in web like below:
+
+http://44.201.102.117:3000/Login/login.html           // it should work login page..
+
+sign up and login...will show expense page...add expense..
+login with same cred and check added expense is there r not..it should there..
 
 vt -10 Deploying with Process Manager PM2..
 
@@ -708,7 +913,7 @@ if want to stop multiple processor running u can stop only single..no all proces
 
 
 
-vt -11 What is Nginx and installing it...
+vt-11... What is Nginx and installing it...
 
 
 
@@ -750,7 +955,7 @@ nginx -v
 
 
 
-vt -12 Going Live with Nginx and Understanding conf files...
+vt-12...Going Live with Nginx and Understanding conf files...
 
 
 
@@ -815,7 +1020,7 @@ soo done with config nginx to nodejs...
 
 
 
-vt -13 What is IP Adress and what happens when you switch off your AWS server?
+vt-13...What is IP Adress and what happens when you switch off your AWS server?
 
 when u run any instance on aws
   --IP address -default would be dynamic
@@ -841,7 +1046,7 @@ xubair.yavtechnology,com -> hit DNS -->will which server or ip Address..and then
 
 
 
-vt -14 What are Load balancers used for
+vt-14...What are Load balancers used for
 
 
 server 1--> 100% - it starts hanging...
