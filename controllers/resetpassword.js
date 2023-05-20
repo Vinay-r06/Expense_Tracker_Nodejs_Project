@@ -86,7 +86,7 @@ exports.forgotpassword= async(req,res,next)=>{
         sender,
         to: receivers,
         subject:'Forgot Password',
-        htmlContent:`<a href="http://44.201.102.117:3000/password/resetpassword/${id}">Reset Password</a>`,
+        htmlContent:`<a href="http://localhost:3000/password/resetpassword/${id}">Reset Password</a>`,
         textContent:`you are requested for password reset`,  
     })
      t.commit();
@@ -117,7 +117,7 @@ exports.resetpassword= async(req,res,next)=>{
                           <html>
                           <body>
 
-              <form action="http://44.201.102.117:3000/password/updatepassword/${forgotid}" name="resetform" id="resetform" method="get">
+              <form action="http://localhost:3000/password/updatepassword/${forgotid}" name="resetform" id="resetform" method="get">
               <label for="password">Enter New Password</label><br>
               <input type="password" name="password" id="password" required/><br><br>
               <button type="submit" >Set password</button><br><br>

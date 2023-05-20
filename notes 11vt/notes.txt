@@ -671,7 +671,7 @@ npm start
 
 
 
-testing this in web page copied from network.. ...http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+testing this in web page copied from network.. ...http://localhost:3000/expense/getExpense?page=1&limit=3
 show in web when run -->{'success':false}
 shows success is false because jwt not..(same should show on server when u hit url)
 
@@ -680,17 +680,17 @@ in the same should show on server also...
 
 
 copy open address in ec2 instance..
-Public IPv4 address--44.201.102.117
+Public IPv4 address--localhost
 
 run using ip address  of ec2 instance like below..
 
-http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+http://localhost:3000/expense/getExpense?page=1&limit=3
 
 it will simply running and running...
 because u not opened the port..port not accessiable
 in the security grp u not opened this port...outside world to access..
 
-the accessiable is port 22 that is for ssh--->44.201.102.117:22
+the accessiable is port 22 that is for ssh--->localhost:22
 it doesnt return anything because ssh..ssh for connecting servers..
 
 
@@ -700,30 +700,30 @@ add rule:
 custom tcp  3000  anywhere 0.0.0.0/0 -->anyone anywhere...
 
 
-run in web-->44.201.102.117:3000
+run in web-->localhost:3000
 something started working -->shows  ---{'success':false}
 now showing like when copied link from network 
 
 now both link working:
 
-http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
-http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+http://localhost:3000/expense/getExpense?page=1&limit=3
+http://localhost:3000/expense/getExpense?page=1&limit=3
 
 
 now the backend is opened and 3000 is accesible
 
-to connect frontend -->change- localhost -->44.201.102.117
+to connect frontend -->change- localhost -->localhost
 all frontend will cahnge...
 
 
 now run -->login or sign page and create user and login..
 
 after login u will expense page ...and check network tab---
-it will hit --Request URL: http://44.201.102.117:3000/expense/getExpense?page=1&limit=3
+it will hit --Request URL: http://localhost:3000/expense/getExpense?page=1&limit=3
 ip address it is hitting..
 
 add expense-->that also hitting same:
-Request URL: http://44.201.102.117:3000/expense/addExpense
+Request URL: http://localhost:3000/expense/addExpense
 
 
 this is how depoly ur application...and use it with frontend
@@ -819,6 +819,9 @@ npm start                  //-- got error  already running..
 
 
 run the npm start in vs code and kill the terminal ...
+and check http://localhost:3000/Login/login.html              // it will not work 
+
+
 
 kill the terninal in aws terminal:
 
@@ -829,10 +832,13 @@ npm start                    // it starts working
 
 copy ec2 instance ip address and run in web like below:
 
-http://44.201.102.117:3000/Login/login.html           // it should work login page..
+http://42.34.33.117:3000/Login/login.html           // it should work login page..
 
 sign up and login...will show expense page...add expense..
 login with same cred and check added expense is there r not..it should there..
+
+
+
 
 vt -10 Deploying with Process Manager PM2..
 
@@ -856,7 +862,8 @@ pm2 start app.js
 after kill the terminal...it is still working
 
 want to see logs...
-nvm use 14
+
+//nvm use 14
 pm2 logs
 
 
@@ -883,10 +890,11 @@ kill the one pid(process id):
 
 run - kill "pid number"
 
-npm i -g pm2
+npm i -g pm2                              // install in aws server..
 sudo pm2 start app.js
 
 check login and sign up..it should work...
+http://42.34.33.117:3000/Login/login.html  all works in aws server
 
 run- pm2 logs
 
@@ -894,7 +902,7 @@ to stop :   when npm was running find the port and kill it ...that was hectic..
 
 run - pm2 stop all
 
-after this pages not shown when run login and sign up..
+after this pages not shown when run login and sign up page in web..
 
 now start:
 
@@ -951,18 +959,38 @@ nginx -v
 --configure Nginx -> port 80 what should happen...-->reverse proxy to localhost:3000..
 
 
+nignx server is listing on port 80...whenever request comes it is rerouting to  localhost:3000
 
+in aws server ---ls   // in home -->ec2-user@ip
+select--> cd  "etc"
+ls
+
+not found lets see other session..
+
+
+copy paste code from medium website a
 
 
 
 vt-12...Going Live with Nginx and Understanding conf files...
 
 
+in aws server : run 
+
+-->(reverse-i-search)`sy':systemctl status nginx
+
+u can see it is running --> active(running)..
+
+
+in the nginx config
+
+whenever traffic comes to port 80-> divert it to some other port and get the response from there..
 
 assignment total points ->7 days--> average students..
 
 2100->300
 
+aws server:
 
 pwd
 cd../
@@ -978,27 +1006,37 @@ systemctl status nginx      (using "nginx.conf") it will compile and excute..
 
  vi nginx.conf
 
+
+ go to ec2 instance and open port 80...rgt now--> u opened port :22 to enter the server..and 3000--> we opened to test our application..
+ add rule: select "HTTP" and select 0.0.0.0/0
+
+ and run in web --> 3.84.55.2
+ u will get  niginx page -> welcome
+
 copy nginx path and run when open port 80 in ec2 instance..  vi /usr/share/nginx/html
+:q
 
 cd /usr/share/nginx/html
 ls
 u will get all inside files..
-vi index.html
+sudo vi index.html
+i->insert to edit..<p> this is the default for sharpener nginx
 to save-->esc :wq!  --> cant edit because not super user..(!-> forcing)
 
 
 :q! --> to clear and come back..
-vi index.html     --> now works..
 
 restart:
 (reverse-i-search)`res`:sudo service nginx restart ... now running on port 80 with edited
 
 shift +C
-cd ~(go back)
+cd ~(go back to home)
 pwd
-cd ../../etc/nginx
+cd ../../etc/nginx/
 
 
+
+i want 3.84.55.5:3000--i want this to be serve from this port..3.84.55.5/
 we should serve login page...so we should update nginx config
 
 vi nginx.conf
@@ -1006,18 +1044,44 @@ vi nginx.conf
 esc :q
 
 cd conf.d/
-ls                  (we dont had any file so create one..)
+ls                  (we dont had any file when opened so create one..)
 sudo vi expensetracker.conf      
 
-copy code from medium for listen to port 80...
+copy code from medium for listen to port 80...below copy this..
+
+
+
+server {
+   listen         80 default_server;
+   listen         [::]:80 default_server;
+   server_name    localhost;
+   root           /usr/share/nginx/html;
+location / {
+       proxy_pass http://127.0.0.1:3000;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection 'upgrade';
+       proxy_set_header Host $host;
+       proxy_cache_bypass $http_upgrade;
+   }
+}
+
+
+
+
+
+
+
 esc :wq!   (saving code..)
 (reverse-i-search)`res`:sudo service nginx restart   --->to reload because new code added..
 systemctl status nginx          (u will see active running..)
 
 
 soo done with config nginx to nodejs...
+u can look at thier link...there is no :3000...before it was there...
+check all login add expense delete..it will work...---> 3.84.55.5/expensetracker/index.html
 
-
+http is not secure...u can add https in niginx..u can look in--> cd niginx.conf
 
 
 vt-13...What is IP Adress and what happens when you switch off your AWS server?
@@ -1032,6 +1096,28 @@ when u run any instance on aws
 
 
   in aws u want create elastic and associate and when reset it will not reset but in azure it will give different ip address everytime reset..
+
+elastic ip address: search in aws
+ select "allocate ip address"..
+  fill all
+  allcote click..
+
+
+in elastic ip address which created...
+select "associate elastic ip address"
+choose u r instance..
+enter user private address..
+dont tick last checkbox..
+click associate..
+
+
+
+
+  go back to ec2 instance..
+
+and select running instance and see the public ip ..."public IPv4 address"..
+ and switch off and on and see ip address is same.."public IPv4 address"
+
 
 
 
@@ -1059,3 +1145,375 @@ server 2 (32 gb)
 
 whenever request --> re1 1 ....req 100......(this request sent to server 1 and server 2 when decision is made by load balancer..)
 
+
+
+
+
+
+
+
+
+CICD...
+
+
+
+vt 1...What is CICD and Jenkins?
+
+
+
+whenever u make any small change..
+-push it to git      //local to git
+-ssh into server
+-pull from git....// not clone git...its already there..u need to push which u updated..
+-pm2 start app.js or npm start..whatever..
+
+
+what we want is automatic deployment when i push my code to git (cicd pipelines..)
+
+ -Jenkins..
+ u can pause and give id and tell to jenkins to deploy..
+
+
+
+
+
+// when updated git push and login to aws..  this is normal deploy to aws...
+
+cd "project name"
+git branch
+sudo su
+git pull origin "projectname"..
+pm2 stop all
+pm2 start app.js
+pm2 logs
+
+
+run in web --> login page..
+
+and see the logs in aws terminal..
+
+
+
+
+
+
+vt 2...Installing Jenkins and accessing Jenkins UI..
+
+
+what we want is automatic deployment when i push my code to git (cicd pipelines..)
+
+-install Jenkins..
+-how to configure jenkins (UI)
+
+
+install jenkins in aws ...
+
+go to u r project ...-->ExpenseTrackerBackend..
+
+-sudo su                   // ctrl + d -->exit-- is the coming out of the super user..
+-sudo yum update -y
+-sudo wget -0 /etc/yum.repos.d/jenkins.repo \
+ https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+ -sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+ -sudo yum upgrade
+   y
+- sudo amazon-linux-extras install java-openjdk11 -y
+-sudo yum install jenkins -y                           // u will get error...
+-sudo amazon-linux-extras install epel -y
+-sudo yum install jenkins -y 
+-sudo systemctl enable jenkins
+-sudo systemctl start jenkins
+-sudo systemctl status jenkins
+   jenkins is running now ..u can see it is active..
+
+
+
+
+to access UI of jenkins...
+-hit 8080 port with ip address of which u running...and open the port 8080 in aws securitygroup..
+ 42.34.33.117:8080
+
+ add rule:
+
+ custom tcp  8080 0.0.0.0/0(anywhere)..
+
+ run  42.34.33.117:8080
+ in aws server or where u installed jenkins:
+ sudo vi "copy from which shows path in ui of jenkins"  ..for password..
+
+
+
+
+
+ vt-3....Configure Jenkins with Git Git creds...
+
+
+ 
+what we want is automatic deployment when i push my code to git (cicd pipelines..)
+
+-install Jenkins..
+-how to configure jenkins (UI)
+    -configuring git so that jenkinscan read from (give git creds)
+    - which repository u want jenkins to look at 
+    -which branch
+    -jenkins would store wheather it pulls from github , so u need to configure where do u want to store..
+    -need to configure what commands to run ->npm i
+    -whatever anything in ur repo/branch is changed , rerun everything..
+
+
+
+
+login jenkins using password..
+
+select "install suggested plugins"
+
+fill all - inforamation  
+save that http addres they gave,,,
+
+
+next add git extension so need credential plugins..:
+
+select manage jenkins
+select manage plugins
+search "credentials"          //it is already there..
+
+go to dashboard..
+select manage jenkins
+select manage credential
+select "jenkins"            //stores scoped to jenkins    "system"
+select "global credential (unrestricted)"
+add credential                                       // scope - global
+add git email and password..
+
+
+go to home jenkins
+add items
+enter name and click ok
+select "git"  select "git credential" urs and copy "repo url" and paste..
+enter which "branch" or create new branch.."cicddeploy"
+create "new branch" which same name like normal git bash or vs code terminal..make some changes in code..
+and commit
+and push code to branch
+
+add name branch to jenkins branch fill ups..
+and "save"
+
+click "build now"
+
+
+
+vt-4...Configure Jenkins UI to pull from Git...
+
+to know path --click--"console output"...and see 
+and check that path in aws server..
+
+
+whenever u make any small change..
+ -push it to git
+ -ssh into server
+ -pull from git
+ -npm i
+ -pm2 start app.js or npm start
+
+
+
+
+
+-install Jenkins..
+-how to configure jenkins (UI)
+   - we had to put a password
+   -install all the recommeded plugins
+   -we also set up our username and password
+   -when u used to git clone, specify username and password and specify which repository u want to clone..
+
+
+
+
+
+
+vt-5...Running commands automatically after importing code from git via Jenkins...   
+
+
+
+in aws:
+
+stop pm2:  
+sudo pm2 stop all
+in jenkins click: "build now"
+check it is working web..
+
+go to aws:
+sudo pm2 status
+
+
+if its still running...lets kill that..
+
+lsof -i :3000
+kill "id"
+lsof -i :3000    // now check it is there anything running..
+
+
+check in web by running...like:..3.84.55.66:300/Login/login.html
+
+and it should not work..
+
+in jenkins:
+again : "build now" 
+
+check in web.. confirm not working.
+
+lets build automatic:
+
+in aws server:
+
+sudo npm i                // u can do this if fails..: sudo npm install  --unsafe-perm=true --allow-root 
+
+npm start
+
+u will get sequelize error database credential issue...and to escape.. press "ctrl+c"
+
+open .env->  -- vi .env
+                cd ~                           //root directory...-->/home/ec2-user 
+
+
+                open project expense ---> which u upladed aws database cred in .env
+                open .env 
+                aopy and paste that details in vs code .env 
+                and push and commit the code
+                and push to branch "cicddeployment" in terminal vs code
+
+ go back workspace(jenkins):
+
+ first-- "build now"
+ go to tick mark...select ...console output..
+ u will find path..
+ in aws server: paste that path----> cd "path"
+ open env--> cd .env
+
+go to jenkins: "build now"
+
+now changes will show aws .env file..."cd .env"
+npm start                                               // if gets error-->kill terminal...and check pm2 running stop that also by sudo...and check running other...
+pm2 start app.js
+
+                                                         // if still running stop by sudo pm2
+
+go to jenkins: in u r project        // to add commands in jenkins..
+Configure
+add build: excute shell
+add all commands of list and save..                 // list of commands..--> sudo npm install --unsafe-perm=true --allow-root
+build now...                                                             -->sudo pm2 stop all
+                                                                         -->pm2 start app.js
+
+if error occurs do below in aws:
+
+sudo visudo
+press "i" insert
+"jenkins ALL=(ALL) NOPASSWD: ALL"
+:wq
+
+go to jenkins:
+ build now 
+
+ again error occurs:
+ in aws do -- pm2 stop all
+pm2 start app.js
+
+go to jenkins:
+ build now 
+
+ again error occurs:
+
+ check commons of list added..it is sudo
+
+// list of commands..--> sudo npm install --unsafe-perm=true --allow-root
+                                          -->sudo pm2 stop all
+                                          -->pm2 start app.js
+
+
+run in web...3.78.55.5:3000/Login/login.html
+
+
+stop the pm2 in aws--> pm2 stop all..
+and run in web..it is stopped working...
+now go to jenkins and "build now"
+it should work...
+
+if error occures:
+
+pm2 status
+lsof -i :3000
+pm2 start app.js
+lsof -i :3000
+
+
+run in web...3.78.55.5:3000/Login/login.html
+
+it should work..
+
+go to jenkins: 
+Configure
+build ...check all the list of commands below :
+                                          -->sudo npm install --unsafe-perm=true --allow-root
+                                          -->sudo pm2 stop all
+                                          -->sudo pm2 start app.js
+
+save it
+buld now
+
+
+run in web...3.78.55.5:3000/Login/login.html
+it should work..
+
+ in aws do --
+ --> pm2 stop all
+ -->pm2 status
+-->sudo pm2 status                  //if anything running super user or another user check and stop..
+---> sudo pm2 stop all
+
+
+go to jenkins:
+buld now
+
+now run in web...3.78.55.5:3000/Login/login.html
+
+it will  work..
+
+
+
+to automate:
+cicd pipelines...
+-so jenkins should automatically watch for new builds..
+-automatically build it..                            // when changes made in vs code and push to git.. it will do automatically all things..
+
+
+
+
+
+
+
+
+vt--6...Git push deploys your code directly to AWS....
+
+
+to automate :
+
+go to jenkins:
+configure
+build triggers
+select-- poll SCM                      //source code manager..SCM
+ put *****                      // corntab guru   for trigger
+
+save it..
+
+
+
+now do new code push when changed..
+
+-vs code made some changes in code...
+push 
+commit 
+in terminal vs code...--> git push origin cicddeployment
+
+watch in jenkins...it will do automatically "build now".....           // u can see git polling log... 

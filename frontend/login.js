@@ -9,7 +9,7 @@ async function login(e){
     }
     console.log(loginDetails);
 
- const response= await axios.post("http://44.201.102.117:3000/user/login", loginDetails)
+ const response= await axios.post("http://localhost:3000/user/login", loginDetails)
 
  console.log(response.data)
 
